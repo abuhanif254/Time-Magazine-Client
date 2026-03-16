@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import SearchBar from '../components/SearchBar';
 import { Link } from 'react-router-dom';
 
 type Category =
@@ -102,8 +103,10 @@ function formatMeta(story: Story) {
   return `${story.author} · ${story.minutes} min read · ${story.publishedLabel}`;
 }
 
+
 const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>('All');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const featured = useMemo(() => STORIES.find((s) => s.featured) ?? STORIES[0], []);
   const latest = useMemo(
@@ -112,11 +115,22 @@ const Home = () => {
   );
   const trending = useMemo(() => STORIES.filter((s) => s.id.startsWith('trending-')).slice(0, 3), []);
 
-  const categoryStories = useMemo(() => {
+  const filteredStories = useMemo(() => {
     const pool = STORIES.filter((s) => !s.featured);
-    if (selectedCategory === 'All') return pool;
-    return pool.filter((s) => s.category === selectedCategory);
-  }, [selectedCategory]);
+    if (!searchQuery.trim()) return pool;
+    const q = searchQuery.trim().toLowerCase();
+    return pool.filter(
+      (s) =>
+        s.title.toLowerCase().includes(q) ||
+        s.dek.toLowerCase().includes(q) ||
+        s.author.toLowerCase().includes(q)
+    );
+  }, [searchQuery]);
+
+  const categoryStories = useMemo(() => {
+    if (selectedCategory === 'All') return filteredStories;
+    return filteredStories.filter((s) => s.category === selectedCategory);
+  }, [selectedCategory, filteredStories]);
 
   return (
     <div className="px-4 py-8">
@@ -152,6 +166,9 @@ const Home = () => {
             </Link>
           </div>
         </div>
+
+        {/* Search Bar */}
+        <SearchBar onSearch={setSearchQuery} />
 
         <section className="mt-8 grid gap-6 lg:grid-cols-12">
           <article className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm lg:col-span-8">

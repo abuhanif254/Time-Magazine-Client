@@ -1,14 +1,29 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CATEGORIES, STORIES, formatMeta, type Category } from '../data/content';
+import { CATEGORIES, STORIES as LOCAL_STORIES, formatMeta, type Category, type Story } from '../data/content';
+import { fetchStories } from '../services/api';
 
 const Articles = () => {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<Category | 'All'>('All');
+  const [stories, setStories] = useState<Story[]>(LOCAL_STORIES);
+
+  useEffect(() => {
+    fetchStories()
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setStories(data);
+        }
+      })
+      .catch(() => {
+        // fall back to local stories
+      });
+  }, []);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return STORIES.filter((s) => !s.featured)
+    return stories
+      .filter((s) => !s.featured)
       .filter((s) => (category === 'All' ? true : s.category === category))
       .filter((s) => {
         if (!q) return true;
@@ -18,9 +33,12 @@ const Articles = () => {
           s.author.toLowerCase().includes(q)
         );
       });
-  }, [query, category]);
+  }, [query, category, stories]);
 
-  const featured = useMemo(() => STORIES.find((s) => s.featured) ?? STORIES[0], []);
+  const featured = useMemo(
+    () => stories.find((s) => s.featured) ?? stories[0],
+    [stories],
+  );
 
   return (
     <div className="px-4 py-8">
