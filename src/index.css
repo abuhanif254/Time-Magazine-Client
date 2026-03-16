@@ -1,1 +1,14 @@
 @import "tailwindcss";
+
+@keyframes ticker-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+.ticker-track {
+  animation: ticker-marquee 28s linear infinite;
+}
