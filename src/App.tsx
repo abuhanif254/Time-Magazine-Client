@@ -12,11 +12,19 @@ import Trending from './pages/Trending';
 import Login from './pages/Login';
 import Articles from './pages/Articles';
 import NotFound from './pages/NotFound';
+import { ThemeProvider, useTheme } from './theme/ThemeContext';
 
-function App() {
+function AppShell() {
+  const { theme } = useTheme();
+
+  const themeClasses =
+    theme === 'dark'
+      ? 'bg-gray-950 text-gray-50'
+      : 'bg-gray-50 text-gray-900';
+
   return (
     <Router>
-      <div className="min-h-screen flex flex-col bg-gray-50">
+      <div className={`min-h-screen flex flex-col transition-colors ${themeClasses}`}>
         <Header />
         <main className="flex-1">
           <Routes>
@@ -32,6 +40,14 @@ function App() {
         <ChatWidget />
       </div>
     </Router>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <AppShell />
+    </ThemeProvider>
   );
 }
 
