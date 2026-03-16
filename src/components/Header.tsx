@@ -1,6 +1,7 @@
 import { Link, NavLink } from 'react-router-dom';
 import { useTheme } from '../theme/ThemeContext';
 import NewsTicker from './NewsTicker';
+import Clock from './Clock';
 
 const linkBase =
   'text-sm font-semibold text-white/90 hover:text-white hover:underline underline-offset-4';
@@ -50,6 +51,8 @@ const Header = () => {
                 Login
               </NavLink>
             </nav>
+
+            <Clock />
 
             <button
               type="button"
