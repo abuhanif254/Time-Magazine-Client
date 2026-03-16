@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CATEGORIES, STORIES as LOCAL_STORIES, formatMeta, type Category, type Story } from '../data/content';
 import { fetchStories } from '../services/api';
+import ShareButtons from '../components/ShareButtons';
 
 const Articles = () => {
   const [query, setQuery] = useState('');
@@ -87,13 +88,14 @@ const Articles = () => {
               </h3>
               <p className="mt-2 text-sm text-gray-700">{featured.dek}</p>
               <p className="mt-4 text-xs text-gray-600">{formatMeta(featured)}</p>
-              <div className="mt-5">
+              <div className="mt-5 flex flex-col gap-3">
                 <Link
                   to="/"
                   className="inline-flex items-center justify-center rounded-xl bg-red-700 px-4 py-2.5 text-sm font-extrabold text-white hover:bg-red-800"
                 >
                   Read on home
                 </Link>
+                <ShareButtons title={featured.title} />
               </div>
             </div>
           </article>
@@ -146,10 +148,11 @@ const Articles = () => {
                     {story.title}
                   </h4>
                   <p className="mt-2 line-clamp-2 text-sm text-gray-700">{story.dek}</p>
-                  <div className="mt-4 flex items-center justify-between gap-3">
-                    <p className="text-xs text-gray-600">{formatMeta(story)}</p>
-                    <Link to="/" className="text-sm font-extrabold text-red-700 hover:underline">
-                      Read
+                  <p className="mt-3 text-xs text-gray-600">{formatMeta(story)}</p>
+                  <div className="mt-3 flex items-center justify-between gap-3">
+                    <ShareButtons title={story.title} />
+                    <Link to="/" className="text-xs font-extrabold text-red-700 hover:underline">
+                      Open
                     </Link>
                   </div>
                 </article>
